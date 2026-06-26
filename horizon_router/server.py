@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+from deterministic_horizon.policy import horizon_table
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from deterministic_horizon.policy import horizon_table
 from horizon_router.cache import get_cached_decision
 
 app = FastAPI(title="Deterministic Horizon Router")

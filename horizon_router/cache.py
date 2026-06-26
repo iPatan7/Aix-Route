@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import functools
 
-from deterministic_horizon.policy import delegation_decision, DelegationDecision
+from deterministic_horizon.policy import DelegationDecision, delegation_decision
+
 
 @functools.lru_cache(maxsize=1024)
 def get_cached_decision(

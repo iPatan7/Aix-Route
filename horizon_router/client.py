@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import requests
-
 from deterministic_horizon.policy import recommend_model
+
 
 class HorizonRouter:
     def __init__(self, base_url: str = "http://localhost:8000"):

@@ -10,6 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10,<3.14"
 license = { file = "LICENSE" }
 authors = [
+    { name = "Mohammad Iqbal Patan", email = "aqbalpatan12@gmail.com" },
     { name = "Dongxin Guo" },
     { name = "Jikun Wu" },
     { name = "Siu Ming Yiu" },
@@ -49,6 +50,9 @@ dependencies = [
     "python-dotenv>=1.0",
     "tqdm>=4.65",
     "matplotlib>=3.7",
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "requests>=2.31",
 ]
 
 [project.optional-dependencies]

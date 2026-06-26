@@ -1,7 +1,10 @@
 MIT License
 
-Copyright (c) 2026 Mohammad Iqbal Patan
-Copyright (c) 2026 Dongxin Guo, Jikun Wu, Siu Ming Yiu (upstream: deterministic-horizon)
+Copyright (c) 2026 Dongxin Guo, Jikun Wu, Siu Ming Yiu
+
+This is the upstream license for the deterministic-horizon project
+(https://github.com/bettyguo/deterministic-horizon), on which Aix-Route is
+based. Aix-Route is distributed under the MIT License (see LICENSE).
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
