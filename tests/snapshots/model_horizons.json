@@ -1,0 +1,57 @@
+// Snapshot of deterministic_horizon.policy.MODEL_HORIZONS (paper d* on PermutationProbe).
+{
+  "gpt-4o": {
+    "eps0": 0.02,
+    "d_star": 22.0,
+    "l_eff": 149.912789532386,
+    "gamma": 0.15
+  },
+  "claude-4.5-opus": {
+    "eps0": 0.018,
+    "d_star": 27.0,
+    "l_eff": 273.718424970751,
+    "gamma": 0.15
+  },
+  "o3-mini": {
+    "eps0": 0.014,
+    "d_star": 31.0,
+    "l_eff": 287.09554099428055,
+    "gamma": 0.15
+  },
+  "deepseek-r1": {
+    "eps0": 0.015,
+    "d_star": 29.0,
+    "l_eff": 252.76278384473025,
+    "gamma": 0.15
+  },
+  "llama-3.1-8b": {
+    "eps0": 0.022,
+    "d_star": 20.0,
+    "l_eff": 124.43354071858126,
+    "gamma": 0.15
+  },
+  "llama-3.3-70b": {
+    "eps0": 0.018,
+    "d_star": 28.0,
+    "l_eff": 321.9714923569761,
+    "gamma": 0.15
+  },
+  "qwen-2.5-7b": {
+    "eps0": 0.023,
+    "d_star": 19.0,
+    "l_eff": 111.26415655912417,
+    "gamma": 0.15
+  },
+  "qwen-2.5-72b": {
+    "eps0": 0.018,
+    "d_star": 28.0,
+    "l_eff": 321.9714923569761,
+    "gamma": 0.15
+  },
+  "default": {
+    "eps0": 0.02,
+    "d_star": 24.0,
+    "l_eff": 211.1217229417878,
+    "gamma": 0.15
+  }
+}

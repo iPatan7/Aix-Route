@@ -1,0 +1,134 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aix-route"
+version = "1.0.1"
+description = "Aix-Route — a production routing layer that decides when an agent should reason with an LLM vs. delegate to a tool, based on the Deterministic Horizon."
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Dongxin Guo" },
+    { name = "Jikun Wu" },
+    { name = "Siu Ming Yiu" },
+]
+keywords = [
+    "chain-of-thought",
+    "reasoning",
+    "tool-use",
+    "transformer",
+    "state-tracking",
+    "inference-time-compute",
+    "llm-evaluation",
+    "agentic-reasoning",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "pyyaml>=6.0",
+    "omegaconf>=2.3",
+    "typer>=0.12",
+    "rich>=13.7",
+    "pydantic>=2.6",
+    "tenacity>=8.2",
+    "python-dotenv>=1.0",
+    "tqdm>=4.65",
+    "matplotlib>=3.7",
+]
+
+[project.optional-dependencies]
+openai  = ["openai>=1.30"]
+anthropic = ["anthropic>=0.30"]
+local   = ["torch>=2.1", "transformers>=4.40", "accelerate>=0.30", "peft>=0.11"]
+viz     = ["matplotlib>=3.7", "seaborn>=0.13", "pandas>=2.0"]
+notebook = ["jupyter>=1.0", "ipywidgets>=8.0"]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=4.1",
+    "pytest-xdist>=3.5",
+    "ruff>=0.4",
+    "black>=24.3",
+    "mypy>=1.9",
+    "pre-commit>=3.6",
+]
+all = [
+    "openai>=1.30",
+    "anthropic>=0.30",
+    "matplotlib>=3.7",
+    "seaborn>=0.13",
+    "pandas>=2.0",
+    "jupyter>=1.0",
+]
+
+[project.scripts]
+aix-route = "deterministic_horizon.cli:main"
+dh = "deterministic_horizon.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/iPatan7/Aix-Route"
+Repository = "https://github.com/iPatan7/Aix-Route"
+Issues = "https://github.com/iPatan7/Aix-Route/issues"
+Documentation = "https://github.com/iPatan7/Aix-Route/blob/main/README.md"
+Changelog = "https://github.com/iPatan7/Aix-Route/blob/main/CHANGELOG.md"
+
+# The package sources live flat under src/ (src/__init__.py, src/analysis.py, …)
+# and are exposed as the `deterministic_horizon` import package via this mapping,
+# so `import deterministic_horizon` and all `from deterministic_horizon.X` imports
+# keep working without a nested src/deterministic_horizon/ directory.
+[tool.setuptools]
+package-dir = { "deterministic_horizon" = "src" }
+packages = [
+    "deterministic_horizon",
+    "deterministic_horizon.estimators",
+    "deterministic_horizon.metrics",
+    "deterministic_horizon.models",
+    "deterministic_horizon.tasks",
+    "deterministic_horizon.training",
+]
+
+[tool.setuptools.package-data]
+deterministic_horizon = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-ra --strict-markers --strict-config"
+markers = [
+    "slow: tests that are slow to run",
+    "api: tests requiring API keys (skipped by default)",
+    "integration: integration tests",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "C4"]
+ignore = ["E501", "B008"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310", "py311", "py312"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = false
+warn_unused_configs = true
+ignore_missing_imports = true

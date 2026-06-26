@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deterministic Horizon — Interactive Explorer</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 2rem; color: #1a1a1a; }
+  h1 { font-size: 1.4rem; }
+  table { border-collapse: collapse; margin-top: 1rem; }
+  th, td { border: 1px solid #ccc; padding: 0.3rem 0.7rem; text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+  caption { text-align: left; font-weight: 600; margin-bottom: 0.4rem; }
+  .muted { color: #666; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<h1>Deterministic Horizon — Interactive Explorer</h1>
+<p class="muted">
+  Per-model decoherence constants are embedded below and kept in exact
+  agreement with <code>deterministic_horizon.policy</code> by the
+  <code>test_explorer_sync</code> guard. Pick a depth to see the predicted
+  chain-of-thought accuracy <code>P(correct) = exp(-d&middot;&epsilon;&#8320; -
+  &gamma;&middot;d(d+1)/(2&middot;L_eff))</code> and where it crosses 50% (d*).
+</p>
+
+<label>Reasoning depth d:
+  <input id="depth" type="number" value="10" min="0" max="100" step="1">
+</label>
+
+<table id="horizon-table">
+  <caption>Model horizons</caption>
+  <thead>
+    <tr><th>Model</th><th>&epsilon;&#8320;</th><th>d*</th><th>P(correct) at d</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+"use strict";
+    const MODELS = {
+      "gpt-4o": [0.02, 22.0],  // L_eff=149.91
+      "claude-4.5-opus": [0.018, 27.0],  // L_eff=273.72
+      "o3-mini": [0.014, 31.0],  // L_eff=287.10
+      "deepseek-r1": [0.015, 29.0],  // L_eff=252.76
+      "llama-3.1-8b": [0.022, 20.0],  // L_eff=124.43
+      "llama-3.3-70b": [0.018, 28.0],  // L_eff=321.97
+      "qwen-2.5-7b": [0.023, 19.0],  // L_eff=111.26
+      "qwen-2.5-72b": [0.018, 28.0],  // L_eff=321.97
+      "default": [0.02, 24.0],  // L_eff=211.12
+    };
+    const GAMMA = 0.15;
+
+    // L_eff calibrated so the decay curve crosses 0.5 exactly at d*.
+    function lEff(eps0, dStar, alpha) {
+      const denom = Math.log(1 / alpha) - eps0 * dStar;
+      return (GAMMA * dStar * (dStar + 1)) / (2 * denom);
+    }
+
+    function accuracy(depth, eps0, dStar) {
+      const L = lEff(eps0, dStar, 0.5);
+      return Math.exp(-depth * eps0 - (GAMMA * depth * (depth + 1)) / (2 * L));
+    }
+
+    function render() {
+      const depth = Number(document.getElementById("depth").value) || 0;
+      const tbody = document.querySelector("#horizon-table tbody");
+      tbody.innerHTML = "";
+      const names = Object.keys(MODELS).sort((a, b) => MODELS[a][1] - MODELS[b][1]);
+      for (const name of names) {
+        const [eps0, dStar] = MODELS[name];
+        const acc = accuracy(depth, eps0, dStar);
+        const tr = document.createElement("tr");
+        tr.innerHTML =
+          "<td>" + name + "</td>" +
+          "<td>" + eps0.toFixed(3) + "</td>" +
+          "<td>" + dStar.toFixed(1) + "</td>" +
+          "<td>" + (acc * 100).toFixed(1) + "%</td>";
+        tbody.appendChild(tr);
+      }
+    }
+
+    if (typeof document !== "undefined") {
+      document.getElementById("depth").addEventListener("input", render);
+      render();
+    }
+</script>
+</body>
+</html>

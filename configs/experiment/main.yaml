@@ -1,0 +1,60 @@
+# Main Experiment Configuration
+# ==============================
+# Usage: python -m deterministic_horizon.run experiment=main
+
+defaults:
+  - _self_
+  - model: gpt-4o
+  - task: permutation
+
+# Experiment metadata
+experiment:
+  name: deterministic_horizon_main
+  description: "Main experiment evaluating reasoning boundaries"
+  version: "1.0.0"
+  seed: 42
+
+# Task generation settings
+# Note: for PermutationProbe the max BFS-optimal depth is the diameter C(n,2),
+# i.e. 28 for the default n=8. Use larger n (12, 16) for deeper instances.
+task:
+  n_instances: 500
+  n_elements: 8
+  min_depth: 4
+  max_depth: 28
+  depth_step: 4
+
+# Evaluation settings
+evaluation:
+  conditions: ["C1", "C2", "C3", "C4", "C5"]
+  batch_size: 50
+  max_retries: 3
+  timeout: 120
+
+# Output settings
+output:
+  results_dir: results
+  figures_dir: assets/figures
+  cache_dir: .cache
+  save_traces: true
+  save_attention: false  # Expensive, only for mechanistic analysis
+
+# Logging
+logging:
+  level: INFO
+  wandb:
+    enabled: false
+    project: deterministic-horizon
+    entity: null
+
+# Determinism
+determinism:
+  seeds: [42, 2024, 2025]
+  deterministic: true
+  save_rng_state: true
+
+# Hardware
+hardware:
+  device: auto  # auto, cpu, cuda, cuda:0, etc.
+  dtype: bfloat16
+  max_memory: null  # Auto-detect

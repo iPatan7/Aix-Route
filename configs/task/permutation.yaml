@@ -1,0 +1,63 @@
+# Permutation Task Configuration
+# ===============================
+
+task:
+  name: permutation
+  description: "PermutationProbe — adjacent-transposition puzzle on the symmetric group S_n"
+
+  # State space parameters: S_n with n in {8, 12, 16} in the paper.
+  state_size: 8  # Number of elements [0..7]
+
+  # Canonical operators: the n-1 adjacent transpositions {(i, i+1)}.
+  # BFS-optimal depth then equals the target's inversion count.
+  operators:
+    - swap_01
+    - swap_12
+    - swap_23
+    - swap_34
+    - swap_45
+    - swap_56
+    - swap_67
+
+  # Instance generation. Max BFS-optimal depth is the diameter C(n,2) = 28 (n=8).
+  generation:
+    min_depth: 4
+    max_depth: 28
+    depth_step: 4
+    instances_per_depth: 100
+    solver: bfs  # bfs or a_star
+    max_solver_time: 60  # seconds per instance
+  
+  # Prompt settings
+  prompt:
+    format: structured  # structured or natural
+    include_example: true
+    example_depth: 3
+  
+  # Tool definitions for C3 condition
+  tools:
+    apply_operation:
+      description: "Apply an adjacent transposition to the current state"
+      parameters:
+        operation:
+          type: string
+          enum: ["swap_01", "swap_12", "swap_23", "swap_34",
+                 "swap_45", "swap_56", "swap_67"]
+    
+    verify_state:
+      description: "Check if current state matches target"
+      parameters:
+        state:
+          type: array
+          items:
+            type: integer
+    
+    get_current_state:
+      description: "Get the current permutation state"
+      parameters: {}
+  
+  # Evaluation settings
+  evaluation:
+    exact_match: true  # Require exact state match
+    partial_credit: false  # No partial credit for close solutions
+    max_steps: 100  # Maximum allowed steps
