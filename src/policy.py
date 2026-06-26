@@ -103,6 +103,18 @@ _MODEL_EPS0_DSTAR: dict[str, tuple[float, float]] = {
     "llama-3.3-70b": (0.018, 28.0),
     "qwen-2.5-7b": (0.023, 19.0),
     "qwen-2.5-72b": (0.018, 28.0),
+    # Groq (open models, free tier) — same architecture families as the
+    # open-weight suite above, so d* mirrors the matching Llama; gpt-oss
+    # estimated from the √(d_h·H) scaling law by parameter count. ------------
+    "llama-3.1-8b-instant": (0.022, 20.0),
+    "llama-3.3-70b-versatile": (0.018, 28.0),
+    "gpt-oss-20b": (0.020, 22.0),
+    "gpt-oss-120b": (0.017, 27.0),
+    # Ollama local tags — keyed by Ollama's "<name>:<size>" tag so routing
+    # works on the local id. Same decoherence params as Qwen-2.5; the 1.5b is
+    # smaller, so a slightly higher ε₀ / lower d*. --------------------------
+    "qwen2.5:1.5b": (0.026, 16.0),
+    "qwen2.5:7b": (0.023, 19.0),
     # Cross-model fallback ("average frontier model", midpoint of [19, 31]) ---
     "default": (0.020, 24.0),
 }

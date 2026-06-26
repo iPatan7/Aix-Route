@@ -18,7 +18,9 @@ if TYPE_CHECKING:  # pragma: no cover
     from deterministic_horizon.models.anthropic_models import AnthropicModel
     from deterministic_horizon.models.deepseek_models import DeepSeekModel
     from deterministic_horizon.models.gemini_models import GeminiModel
+    from deterministic_horizon.models.groq_models import GroqModel
     from deterministic_horizon.models.local_models import LocalModel
+    from deterministic_horizon.models.ollama_models import OllamaModel
     from deterministic_horizon.models.openai_models import OpenAIModel
     from deterministic_horizon.models.together_models import TogetherModel
 
@@ -54,6 +56,14 @@ _REGISTRY: dict[str, tuple[str, str]] = {
     "together-qwen-2.5-72b": ("deterministic_horizon.models.together_models", "TogetherModel"),
     "together-qwen-2.5-7b": ("deterministic_horizon.models.together_models", "TogetherModel"),
     "together-deepseek-r1": ("deterministic_horizon.models.together_models", "TogetherModel"),
+    # Groq (free tier, OpenAI-compatible endpoint) — production model ids
+    "llama-3.1-8b-instant": ("deterministic_horizon.models.groq_models", "GroqModel"),
+    "llama-3.3-70b-versatile": ("deterministic_horizon.models.groq_models", "GroqModel"),
+    "gpt-oss-20b": ("deterministic_horizon.models.groq_models", "GroqModel"),
+    "gpt-oss-120b": ("deterministic_horizon.models.groq_models", "GroqModel"),
+    # Ollama (local, zero cost, OpenAI-compatible endpoint) — pulled locally
+    "qwen2.5:1.5b": ("deterministic_horizon.models.ollama_models", "OllamaModel"),
+    "qwen2.5:7b": ("deterministic_horizon.models.ollama_models", "OllamaModel"),
     # Local / open weight (paper's open-weight suite)
     "llama-3.3-70b": ("deterministic_horizon.models.local_models", "LocalModel"),
     "llama-3.1-8b": ("deterministic_horizon.models.local_models", "LocalModel"),
@@ -132,6 +142,8 @@ def __getattr__(name: str):
         ),
         "GeminiModel": ("deterministic_horizon.models.gemini_models", "GeminiModel"),
         "TogetherModel": ("deterministic_horizon.models.together_models", "TogetherModel"),
+        "GroqModel": ("deterministic_horizon.models.groq_models", "GroqModel"),
+        "OllamaModel": ("deterministic_horizon.models.ollama_models", "OllamaModel"),
         "OpenAICompatibleModel": (
             "deterministic_horizon.models.openai_compatible",
             "OpenAICompatibleModel",
@@ -155,6 +167,8 @@ __all__ = [
     "DeepSeekModel",
     "GeminiModel",
     "TogetherModel",
+    "GroqModel",
+    "OllamaModel",
     "OpenAICompatibleModel",
     "LocalModel",
     "load_model",

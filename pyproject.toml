@@ -58,6 +58,8 @@ dependencies = [
 [project.optional-dependencies]
 openai  = ["openai>=1.30"]
 anthropic = ["anthropic>=0.30"]
+groq    = ["openai>=1.30"]  # Groq uses the OpenAI-compatible client
+ollama  = ["openai>=1.30"]  # Ollama uses the OpenAI-compatible client (+ core requests)
 local   = ["torch>=2.1", "transformers>=4.40", "accelerate>=0.30", "peft>=0.11"]
 viz     = ["matplotlib>=3.7", "seaborn>=0.13", "pandas>=2.0"]
 notebook = ["jupyter>=1.0", "ipywidgets>=8.0"]
