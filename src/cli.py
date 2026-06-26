@@ -365,6 +365,90 @@ def list_tasks() -> None:
     console.print(table)
 
 
+@app.command()
+def calibrate(
+    model: str = typer.Option(..., help="Model name (e.g. llama-3.3-70b-versatile)"),
+    task: str = typer.Option("permutation", help="Task type"),
+    depths: str = typer.Option("3,5,8,10,12,15,18", help="Comma-separated depths to probe"),
+    n: int = typer.Option(10, help="Instances per depth"),
+    n_elements: int = typer.Option(8, help="Task size (e.g. S_n for permutation)"),
+    seed: int = typer.Option(42, help="Random seed"),
+    max_tokens: int = typer.Option(2048, help="Max generation tokens"),
+) -> None:
+    """
+    Measure a model's accuracy-vs-depth and fit its Deterministic Horizon.
+
+    Runs the model at each depth, fits the super-exponential decay
+    (``src/calibrate.py``), and prints the ``(eps0, d_star)`` pair to paste into
+    ``policy._MODEL_EPS0_DSTAR``. Falls back to the empirical 50%-crossing d*
+    when the parametric fit is rejected (out of the theory's regime).
+
+    Needs an API key for cloud models / a running server for Ollama. See
+    benchmarks/groq_calibration.md for the method and worked examples.
+    """
+    from deterministic_horizon.calibrate import empirical_d_star, fit_horizon
+
+    depth_list = [int(x) for x in depths.split(",") if x.strip()]
+    task_obj = load_task(task, n_elements=n_elements, seed=seed)
+
+    try:
+        m = load_model(model, max_tokens=max_tokens, temperature=0.0)
+    except Exception as e:  # noqa: BLE001 - surface a clean CLI error
+        console.print(f"[red]Could not load model {model!r}: {e}[/]")
+        raise typer.Exit(1) from e
+
+    table = Table(title=f"Calibration — {model} on {task}")
+    table.add_column("Depth", justify="right", style="cyan")
+    table.add_column("Accuracy", justify="right")
+    table.add_column("n", justify="right", style="dim")
+
+    measured_depths: list[float] = []
+    measured_accs: list[float] = []
+    with Progress(SpinnerColumn(), TextColumn("{task.description}"), console=console) as prog:
+        for depth in depth_list:
+            if depth > task_obj.max_depth():
+                continue
+            t = prog.add_task(f"depth {depth} ({n} instances)", total=None)
+            correct = 0
+            for _ in range(n):
+                inst = task_obj.generate_instance(depth)
+                resp = m.generate(inst.prompt, system_prompt=inst.system_prompt)
+                correct += int(task_obj.evaluate(inst, resp.content).correct)
+            prog.remove_task(t)
+            acc = correct / n
+            measured_depths.append(depth)
+            measured_accs.append(acc)
+            table.add_row(str(depth), f"{acc:.0%}", str(n))
+
+    console.print(table)
+
+    fit = fit_horizon(measured_depths, measured_accs)
+    emp = empirical_d_star(measured_depths, measured_accs)
+
+    if fit is not None:
+        console.print(
+            f"[green]Parametric fit:[/] eps0={fit['eps0']:.4f}  d*={fit['d_star']:.2f}  "
+            f"L_eff={fit['L_eff']:.2f}  R²={fit['r_squared']:.3f}  "
+            f"(n_points={fit['n_points']})"
+        )
+        console.print(f'[bold]policy tuple:[/]  "{model}": ({fit["eps0"]:.3f}, {fit["d_star"]:.1f}),')
+    elif emp is not None:
+        console.print(
+            f"[yellow]Parametric fit rejected[/] (out of regime). "
+            f"Empirical d* (50% crossing) = {emp:.2f}."
+        )
+        console.print(
+            f'[bold]policy tuple (hold eps0 at open-weight baseline):[/]  '
+            f'"{model}": (0.020, {emp:.1f}),'
+        )
+    else:
+        console.print(
+            "[red]No d* found:[/] accuracy never crosses 50% in the probed range. "
+            "Probe deeper, or flag the model as always-delegate (very low d*)."
+        )
+        raise typer.Exit(1)
+
+
 def main() -> None:
     """Entry point for CLI."""
     app()
