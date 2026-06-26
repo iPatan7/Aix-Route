@@ -103,16 +103,25 @@ _MODEL_EPS0_DSTAR: dict[str, tuple[float, float]] = {
     "llama-3.3-70b": (0.018, 28.0),
     "qwen-2.5-7b": (0.023, 19.0),
     "qwen-2.5-72b": (0.018, 28.0),
-    # Groq (open models, free tier) — same architecture families as the
-    # open-weight suite above, so d* mirrors the matching Llama; gpt-oss
-    # estimated from the √(d_h·H) scaling law by parameter count. ------------
-    "llama-3.1-8b-instant": (0.022, 20.0),
-    "llama-3.3-70b-versatile": (0.018, 28.0),
-    "gpt-oss-20b": (0.020, 22.0),
-    "gpt-oss-120b": (0.017, 27.0),
+    # Groq (open models, free tier) — MEASURED on this infrastructure via
+    # src/calibrate.py on PermutationProbe (n=8 elements, temperature 0). These
+    # served models sit lower than the paper's local/HF setup, so we use the
+    # measured horizons rather than the paper's idealised values. See
+    # benchmarks/groq_calibration.md for the raw accuracy-vs-depth curves.
+    #   llama-3.3-70b-versatile: fit ε₀=0.070, d*=8.2, R²=0.747 (n=4)
+    #   gpt-oss-20b:  empirical d*≈15.5 (50% crossing, n=10); parametric fit
+    #                 rejected (decay too sharp) → ε₀ held at open-weight 0.020
+    #   gpt-oss-120b: empirical d*≈15.0 (50% crossing, n=10); fit rejected
+    #   llama-3.1-8b-instant: 0% even at depth 5 → too weak for state-tracking;
+    #                 d* below the shallowest depth, so it always delegates.
+    "llama-3.3-70b-versatile": (0.070, 8.2),
+    "gpt-oss-20b": (0.020, 15.5),
+    "gpt-oss-120b": (0.018, 15.0),
+    "llama-3.1-8b-instant": (0.150, 3.0),
     # Ollama local tags — keyed by Ollama's "<name>:<size>" tag so routing
-    # works on the local id. Same decoherence params as Qwen-2.5; the 1.5b is
-    # smaller, so a slightly higher ε₀ / lower d*. --------------------------
+    # works on the local id. NOT yet measured on this machine; using the
+    # paper's Qwen-2.5 params as a placeholder (the 1.5b is smaller, so a
+    # slightly higher ε₀ / lower d*). Recalibrate with src/calibrate.py.
     "qwen2.5:1.5b": (0.026, 16.0),
     "qwen2.5:7b": (0.023, 19.0),
     # Cross-model fallback ("average frontier model", midpoint of [19, 31]) ---

@@ -17,8 +17,8 @@ from deterministic_horizon.policy import MODEL_HORIZONS
 
 EXPLORER = Path(__file__).resolve().parents[1] / "docs" / "index.html"
 
-# Matches lines like:   "gpt-4o":          [0.020, 22.0],
-_ROW = re.compile(r'"([a-z0-9.\-]+)":\s*\[([0-9.]+),\s*([0-9.]+)\]')
+# Matches lines like:   "gpt-4o": [0.020, 22.0],  and Ollama tags "qwen2.5:7b".
+_ROW = re.compile(r'"([a-z0-9.:\-]+)":\s*\[([0-9.]+),\s*([0-9.]+)\]')
 _SCRIPT = re.compile(r'<script>\n"use strict";(.*?)</script>', re.S)
 
 

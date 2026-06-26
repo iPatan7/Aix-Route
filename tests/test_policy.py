@@ -74,10 +74,27 @@ def test_negative_depth_rejected():
         expected_neural_accuracy(-1)
 
 
+# The paper's surveyed models (Abstract: d* ∈ [19, 31]). The Groq/Ollama tags
+# added later are calibrated on *this* infrastructure (see
+# benchmarks/groq_calibration.md) and legitimately sit lower, so the paper's
+# range claim is asserted only over the original surveyed set.
+_PAPER_MODELS = {
+    "gpt-4o",
+    "claude-4.5-opus",
+    "o3-mini",
+    "deepseek-r1",
+    "llama-3.1-8b",
+    "llama-3.3-70b",
+    "qwen-2.5-7b",
+    "qwen-2.5-72b",
+}
+
+
 def test_known_model_horizons_in_documented_range():
     # Paper Abstract claims d* ∈ [19, 31] across the surveyed models.
-    for name, params in MODEL_HORIZONS.items():
-        assert 19 <= params["d_star"] <= 31, (name, params)
+    for name in _PAPER_MODELS:
+        d_star = MODEL_HORIZONS[name]["d_star"]
+        assert 19 <= d_star <= 31, (name, d_star)
 
 
 def test_expected_accuracy_crosses_half_at_horizon():
