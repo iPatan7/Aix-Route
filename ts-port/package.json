@@ -1,0 +1,52 @@
+{
+  "name": "aix-route",
+  "version": "1.0.1",
+  "description": "Deterministic Horizon routing — decide when an agent should keep reasoning with the LLM vs. delegate to a tool. Pure-TypeScript port of the aix-route Python policy.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "node --import tsx/esm --test test/*.test.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "llm",
+    "agent",
+    "routing",
+    "tool-use",
+    "chain-of-thought",
+    "reasoning",
+    "deterministic-horizon",
+    "delegation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iPatan7/Aix-Route.git",
+    "directory": "ts-port"
+  },
+  "homepage": "https://github.com/iPatan7/Aix-Route",
+  "license": "MIT",
+  "dependencies": {
+    "@noble/hashes": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

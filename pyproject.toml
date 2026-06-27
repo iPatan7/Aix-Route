@@ -97,7 +97,11 @@ Changelog = "https://github.com/iPatan7/Aix-Route/blob/main/CHANGELOG.md"
 # so `import deterministic_horizon` and all `from deterministic_horizon.X` imports
 # keep working without a nested src/deterministic_horizon/ directory.
 [tool.setuptools]
-package-dir = { "deterministic_horizon" = "src" }
+# `deterministic_horizon` is the implementation (flat under src/); `aix_route`
+# is the friendly public import alias that re-exports it. Both ship in the
+# wheel so `pip install aix-route` exposes `import aix_route` AND, as an alias,
+# `import deterministic_horizon`.
+package-dir = { "deterministic_horizon" = "src", "aix_route" = "aix_route" }
 packages = [
     "deterministic_horizon",
     "deterministic_horizon.estimators",
@@ -105,6 +109,7 @@ packages = [
     "deterministic_horizon.models",
     "deterministic_horizon.tasks",
     "deterministic_horizon.training",
+    "aix_route",
 ]
 
 [tool.setuptools.package-data]
